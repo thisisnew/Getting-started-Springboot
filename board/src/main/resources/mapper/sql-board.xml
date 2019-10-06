@@ -18,7 +18,7 @@
 		]]>	
 	</select>
 	
-	<insert id="insertBoard" parameterType="board.dto.BoardDto">
+	<insert id="insertBoard" parameterType="board.dto.BoardDto" useGeneratedKeys="true" keyProperty="boardIdx">
 		<![CDATA[
 			INSERT INTO T_BOARD
 			(
@@ -37,6 +37,23 @@
 		]]>
 	</insert>
 	
+	<insert id="insertBoardFileList" parameterType="board.dto.BoardFileDto">
+		<![CDATA[
+			INSERT INTO T_FILE(BOARD_IDX, ORIGINAL_FILE_NAME, STORED_FILE_PATH, FILE_SIZE, CREATOR_ID, CREATED_DATETIME)
+			VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.boardIdx},
+				#{item.originalFileName},
+				#{item.storedFilePath},
+				#{item.fileSize},
+				#{item.creatorId},
+				NOW()
+			)
+		</foreach>
+	</insert>
+	
 	<select id="selectBoardDetail" parameterType="int" resultType="board.dto.BoardDto">
 		<![CDATA[
 			SELECT
@@ -50,6 +67,36 @@
 			 	T_BOARD
 			 WHERE
 			 	DELETED_YN = 'N' AND BOARD_IDX = #{boardIdx}
+		]]>
+	</select>
+	
+	<select id="selectBoardFileList" resultType="board.dto.BoardFileDto" parameterType="int">
+		<![CDATA[
+			SELECT
+				IDX
+			  , BOARD_IDX
+			  , ORIGINAL_FILE_NAME
+			  , FORMAT(ROUND(FILE_SIZE / 1024),0) AS FILE_SIZE
+			FROM
+				T_FILE
+			WHERE
+				BOARD_IDX = #{boardIdx}
+				AND DELETED_YN = 'N'
+		]]>
+	</select>
+	
+	<select id="selectBoardFileInformation" parameterType="map" resultType="board.dto.BoardFileDto">
+		<![CDATA[
+			SELECT
+				ORIGINAL_FILE_NAME
+			  , STORED_FILE_PATH
+			  , FILE_SIZE
+			FROM
+				T_FILE
+			WHERE
+				IDX = #{idx}
+				AND BOARD_IDX = #{boardIdx}
+				AND DELETED_YN = 'N'
 		]]>
 	</select>
 	
