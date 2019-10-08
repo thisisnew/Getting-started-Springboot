@@ -23,7 +23,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @EnableTransactionManagement
 @Configuration
-@PropertySource("classpath:/application.properties")
+//@PropertySource("classpath:/application.properties")
 public class DatabaseConfiguration {
 	
 	@Autowired
